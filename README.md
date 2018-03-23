@@ -5,6 +5,7 @@ Checks every pool in the list at https://raw.githubusercontent.com/turtlecoin/tu
 # Usage:
 
 git clone https://github.com/fruktstav/turtlecoin-pool-discordbot.git
+
 cd turtlecoin-pool-discordbot/src
 
 Change the last line in bot.py and enter your bot token from discord developers, then:
