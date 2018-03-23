@@ -27,16 +27,39 @@ async def on_message(message):
 
     if message.content.startswith('!listclaims'):
         pools = claims.keys()
-
+        msg = ""
         for pool in pools:
 
-            await client.send_message(message.channel, "**"+pool + ":** ")
+            msg += "**"+pool + ":**\n"
 
             for users in claims[pool]:
+                msg += str(users)+"\n"
 
-                await client.send_message(message.channel, str(users))
+            msg += "\n"
 
+        await client.send_message(message.channel, msg)
 
+    if message.content.startswith('!unclaim'):
+
+        command = message.content
+        args = message.content.split( )
+        pool = args[1]
+
+        if pool not in claims:
+            await client.send_message(message.channel, "There is no pool with the name \"" + pool + "\" that has been claimed")
+            return
+
+        if message.author not in claims[pool]:
+            await client.send_message(message.channel, message.author.mention + " has not claimed " + pool + ".")
+        else:
+            claims[pool].remove(message.author)
+
+            if len(claims[pool]) == 0:
+                del claims[pool]
+
+            await client.send_message(message.channel, message.author.mention + " has been removed from " + pool)
+            pickle_out = open("claims.pickle","wb")
+            pickle.dump(claims, pickle_out)
 
     if message.content.startswith('!claim'):
 
@@ -64,7 +87,6 @@ async def check_blocks():
     while True:
 
          faulty_nodes = blockchecker.get_faulty_nodes()
-         print('wtfm9')
          if any(faulty_nodes):
              for pool in faulty_nodes:
                  for user in claims[pool]:
