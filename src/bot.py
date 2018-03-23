@@ -9,6 +9,9 @@ import asyncio
 client = discord.Client()
 
 claims = {}
+
+alerts = []
+
 try:
     pickle_in = open("claims.pickle","rb")
     claims = pickle.load(pickle_in)
@@ -36,6 +39,7 @@ async def on_message(message):
                 msg += str(users)+"\n"
 
             msg += "\n"
+
 
         await client.send_message(message.channel, msg)
 
@@ -87,12 +91,24 @@ async def check_blocks():
     while True:
 
          faulty_nodes = blockchecker.get_faulty_nodes()
+
          if any(faulty_nodes):
+
              for pool in faulty_nodes:
+
+                 # Id, such as z-pool.com245204 - i.e. pool name + block where the pool is stuck
+                 id = pool+str(faulty_nodes[pool])
+
+                 if id in alerts:
+                    continue
+
+                 alerts.append(id)
+
                  for user in claims[pool]:
                      await client.send_message(user,pool + " is down!")
                      print("Telling" + str(user) + " that " + pool + " is down")
-
+         else:
+             alerts = []
          await asyncio.sleep(60)
 
 client.loop.create_task(check_blocks())

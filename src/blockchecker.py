@@ -14,7 +14,6 @@ def get_faulty_nodes():
 
     for pool in r.json():
         pool_name = pool
-        print(pool)
         pool_api = r.json()[pool]['url']
         api_command = pool_api + "stats"
 
@@ -27,7 +26,7 @@ def get_faulty_nodes():
              continue
 
     block_heights = {}
-
+    pool_stats['z-pool.com'] = {'timestamp': 1521833885, 'height': 289595, 'reward': 2954626, 'hash': '41d0910d028f2eee9fb8354970477092ced618b087250ce8f7c36ab26cdcae1d', 'difficulty': 345465105}
     for pool in pool_stats:
         height = pool_stats[pool]['height']
         if height not in block_heights:
@@ -35,14 +34,9 @@ def get_faulty_nodes():
         else:
             block_heights[height] += 1
     correct_height = sorted(block_heights.items(), key=operator.itemgetter(1))[-1][0]
-    print(correct_height)
-    print(correct_height)
 
     for pool in pool_stats:
-        print(pool_stats[pool]['height'])
-        print(pool)
         if ( correct_height - pool_stats[pool]['height'] ) > 5:
-            print(pool + " is down")
             faulty_nodes[pool] = pool_stats[pool]['height']
 
     return faulty_nodes
