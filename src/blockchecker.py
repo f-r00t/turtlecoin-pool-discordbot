@@ -26,7 +26,7 @@ def get_faulty_nodes():
              continue
 
     block_heights = {}
-    pool_stats['z-pool.com'] = {'timestamp': 1521833885, 'height': 289595, 'reward': 2954626, 'hash': '41d0910d028f2eee9fb8354970477092ced618b087250ce8f7c36ab26cdcae1d', 'difficulty': 345465105}
+
     for pool in pool_stats:
         height = pool_stats[pool]['height']
         if height not in block_heights:
