@@ -6,19 +6,21 @@ Checks every pool in the list at https://raw.githubusercontent.com/turtlecoin/tu
 
 ## Running the bot:
 
+pip3 install discord.py
+
 git clone https://github.com/fruktstav/turtlecoin-pool-discordbot.git
 
 cd turtlecoin-pool-discordbot/src
 
-Change the last line in bot.py and enter your bot token from discord developers, then:
+Change the last line in bot.py and enter your bot token from discord developers, and the options for mailgun in mailer.py then:
 
 python3 bot.py
 
 ## Interacting with the bot:
 
-!claim pool.url
+!claim pool.url email@address.com
 
-Write this in any channel that the bot is online in, or in a DM to the bot and it will alert you whenever the pool you claim is down/falling behind.
+Write this in any channel that the bot is online in, or in a DM to the bot and it will alert you whenever the pool you claim is down/falling behind. The e-mail parameter is optional.
 
 !unclaim pool.url
 

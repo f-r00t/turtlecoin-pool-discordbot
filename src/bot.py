@@ -5,12 +5,21 @@ import os
 import time
 import blockchecker
 import asyncio
+import mailer
 
 client = discord.Client()
 
 claims = {}
 
-alerts = []
+alerts = [0]
+
+email_addresses = {}
+
+try:
+    pickle_in = open("emails.pickle","rb")
+    email_addresses = pickle.load(pickle_in)
+except:
+    print("No stored email addresses!")
 
 try:
     pickle_in = open("claims.pickle","rb")
@@ -71,6 +80,12 @@ async def on_message(message):
         args = message.content.split( )
         pool = args[1]
 
+        if len(args) > 2:
+            email = args[2]
+            email_addresses[message.author] = email
+            pickle_out = open("emails.pickle","wb")
+            pickle.dump(email_addresses, pickle_out)
+
         # If the pool has not been claimed yet we need to insert an emtpy array into that keys value
         if pool not in claims:
             claims[pool] = []
@@ -98,17 +113,18 @@ async def check_blocks():
 
                  # Id, such as z-pool.com245204 - i.e. pool name + block where the pool is stuck
                  id = pool+str(faulty_nodes[pool])
+                 print(id)
 
                  if id in alerts:
                     continue
 
                  alerts.append(id)
-
                  for user in claims[pool]:
                      await client.send_message(user,pool + " is down!")
-                     print("Telling" + str(user) + " that " + pool + " is down")
-         else:
-             alerts = []
+                     if user in email_addresses:
+                         print("Sending email to " + email_addresses[user])
+                         print(mailer.send_email(email_addresses[user],pool,"") )
+
          await asyncio.sleep(60)
 
 client.loop.create_task(check_blocks())
