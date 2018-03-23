@@ -17,7 +17,9 @@ python3 bot.py
 ## Interacting with the bot:
 
 !claim <pool.url>
+
 Write this in any channel that the bot is online in, or in a DM to the bot and it will alert you whenever the pool you claim is down/falling behind.
 
 !listclaims
+
 Returns a list of all claimed pools and their operators
