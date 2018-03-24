@@ -32,7 +32,7 @@ def get_faulty_nodes():
         api_command = pool_api + "stats"
 
         try:
-             re = requests.get(url=api_command, verify=False)
+             re = requests.get(url=api_command)
              pool_stats[pool] = re.json()['network']
 
         except:
