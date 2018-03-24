@@ -15,6 +15,9 @@ alerts = [0]
 
 email_addresses = {}
 
+allowed_channel = "<insert id string here>"
+
+
 try:
     pickle_in = open("emails.pickle","rb")
     email_addresses = pickle.load(pickle_in)
@@ -37,7 +40,31 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
+    if message.content.startswith('!help'):
+        if message.channel.id != allowed_channel:
+            return
+
+        help_msg = (
+            "```Commands:\n"
+            "\n"
+            "!claim pool.url email@address.com\n"
+            "---------------------------------\n"
+            "Claims pool.url and signs you up for getting Discord mentions whenever a problem is detected on that pool, and email alerts if email address is provided (optional).\n"
+            "\n\n"
+            "!unclaim pool.url\n"
+            "---------------------------------\n"
+            "Unregisters you from receiving notifications about pool.url.\n"
+            "\n\n"
+            "!listclaims\n"
+            "---------------------------------\n"
+            "Returns a list of claimed pools and their claimer(s).```"
+        )
+        await client.send_message(message.channel, help_msg + str(message.channel.id))
+
+
     if message.content.startswith('!listclaims'):
+        if message.channel.id != allowed_channel:
+            return
         pools = claims.keys()
         msg = ""
         for pool in pools:
@@ -53,6 +80,9 @@ async def on_message(message):
         await client.send_message(message.channel, msg)
 
     if message.content.startswith('!unclaim'):
+
+        if message.channel.id != allowed_channel:
+            return
 
         command = message.content
         args = message.content.split( )
@@ -75,6 +105,11 @@ async def on_message(message):
             pickle.dump(claims, pickle_out)
 
     if message.content.startswith('!claim'):
+
+
+        if message.channel.id != allowed_channel:
+            return
+
 
         command = message.content
         args = message.content.split( )
@@ -121,12 +156,14 @@ async def check_blocks():
                  for user in claims[pool]:
                      
                      if faulty_nodes[pool]['error'] == '5blocksbehind':
+                         await client.send_message(client.get_channel(allowed_channel), "**"+pool+"**" + " is 5 blocks behind the network!")
                          await client.send_message(user,"**"+pool+"**" + " is 5 blocks behind the network!")
                          print("Telling" + str(user) + " that " + pool + " is down")
                          if user in email_addresses:
                              print("Sending email to " + email_addresses[user])
                              print(mailer.send_email(email_addresses[user],pool + "'s block height is below the median","Hello! \n \n " + pool + " is 5 blocks behind the network!") )
                      if faulty_nodes[pool]['error'] == 'unresponsive':
+                         await client.send_message(client.get_channel(allowed_channel), "**"+pool+"**" + " is not responsive!")
                          await client.send_message(user,"**"+pool+"**" + " is not responsive!")
                          print("Telling" + str(user) + " that " + pool + " is down")
                          if user in email_addresses:

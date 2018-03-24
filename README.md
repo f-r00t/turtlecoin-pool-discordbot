@@ -12,7 +12,7 @@ git clone https://github.com/fruktstav/turtlecoin-pool-discordbot.git
 
 cd turtlecoin-pool-discordbot/src
 
-Change the last line in bot.py and enter your bot token from discord developers, and the options for mailgun in mailer.py then:
+Add the allowed channel by adding it's channel id to the "allowed_channel" variable in bot.py, also change the last line in bot.py and enter your bot token from discord developers, and finally the options for mailgun in mailer.py then:
 
 python3 bot.py
 
@@ -29,3 +29,7 @@ Remove yourself from pool.url.
 !listclaims
 
 Returns a list of all claimed pools and their operators
+
+!help
+
+Returns a list of available commands

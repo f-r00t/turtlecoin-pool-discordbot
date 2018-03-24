@@ -56,7 +56,6 @@ def get_faulty_nodes():
 
     for pool in pool_stats:
         if ( correct_height - pool_stats[pool]['height'] ) > 5:
-            print(pool + " is down")
 
             id = pool+str(pool_stats[pool]['height'])
 
@@ -67,5 +66,6 @@ def get_faulty_nodes():
             if warnings[id] > warning_treshhold - 1:
                 del warnings[id]
                 faulty_nodes[pool] = {'height': pool_stats[pool]['height'], 'error': '5blocksbehind'}
-
+    pickle_out = open("warnings.pickle","wb")
+    pickle.dump(warnings, pickle_out)
     return faulty_nodes
