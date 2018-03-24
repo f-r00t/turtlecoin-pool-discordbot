@@ -24,7 +24,7 @@ except:
 try:
     pickle_in = open("claims.pickle","rb")
     claims = pickle.load(pickle_in)
-except EOFError:
+except:
     print("No previous data to load")
 
 @client.event
@@ -133,6 +133,7 @@ async def check_blocks():
                              print("Sending email to " + email_addresses[user])
                              print(mailer.send_email(email_addresses[user],pool + " is not responding!","Hello! \n \n " + pool + " has stopped responding.") 
 )
+                     
          await asyncio.sleep(60)
 
 client.loop.create_task(check_blocks())

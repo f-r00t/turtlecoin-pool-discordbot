@@ -1,8 +1,20 @@
-import requests 
+import requests
 import operator
+import pickle
+
+warnings = {}
+
+# Number of warnings which should result in an alert
+warning_treshhold = 3
+
+try:
+    pickle_in = open("warnings.pickle","rb")
+    email_addresses = pickle.load(pickle_in)
+except:
+    print("No stored warnings")
+
 
 def get_faulty_nodes():
-
     faulty_nodes = {}
 
     # Get list of pools
@@ -23,7 +35,14 @@ def get_faulty_nodes():
 
         except:
              print("Cannot connect to " + pool)
-             faulty_nodes[pool] = {'height': 0, 'error': 'unresponsive'} 
+             id = pool+'0'
+             if id in warnings:
+                 warnings[id] += 1
+             else:
+                 warnings[id] = 1
+             if warnings[id] > warning_treshhold - 1:
+                 del warnings[id]
+                 faulty_nodes[pool] = {'height': 0, 'error': 'unresponsive'} 
              continue
 
     block_heights = {}
@@ -34,14 +53,19 @@ def get_faulty_nodes():
         else:
             block_heights[height] += 1
     correct_height = sorted(block_heights.items(), key=operator.itemgetter(1))[-1][0]
-    print(correct_height)
-    print(correct_height)
 
     for pool in pool_stats:
-        print(pool_stats[pool]['height'])
-        print(pool)
         if ( correct_height - pool_stats[pool]['height'] ) > 5:
             print(pool + " is down")
-            faulty_nodes[pool] = {'height': pool_stats[pool]['height'], 'error': '5blocksbehind'}
+
+            id = pool+str(pool_stats[pool]['height'])
+
+            if id in warnings:
+                warnings[id] += 1
+            else:
+                warnings[id] = 1
+            if warnings[id] > warning_treshhold - 1:
+                del warnings[id]
+                faulty_nodes[pool] = {'height': pool_stats[pool]['height'], 'error': '5blocksbehind'}
 
     return faulty_nodes
