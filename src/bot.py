@@ -147,7 +147,7 @@ async def on_message(message):
         error_msg += "```"
 
 
-        if not (4 > len(args) > 0 ):
+        if not (4 > len(args) > 1 ):
             await client.send_message(message.channel, "```Wrong amount of arguments. \n\n"+error_msg)
             return
 
