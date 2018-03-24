@@ -58,11 +58,7 @@ async def on_message(message):
             "\n\n"
             "!listclaims\n"
             "---------------------------------\n"
-            "Returns a list of claimed pools and their claimer(s).\n"
-            "\n\n"
-            "!heights\n"
-            "---------------------------------\n"
-            "Prints a list of pools and their current block height.```"
+            "Returns a list of claimed pools and their claimer(s).```"
         )
         await client.send_message(message.channel, help_msg)
 

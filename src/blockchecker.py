@@ -3,7 +3,7 @@ import operator
 import pickle
 
 warnings = {}
-
+heights = {}
 # Number of warnings which should result in an alert
 warning_treshhold = 3
 
@@ -13,6 +13,8 @@ try:
 except:
     print("No stored warnings")
 
+def get_heights():
+    return heights
 
 def get_faulty_nodes():
     faulty_nodes = {}
@@ -48,6 +50,9 @@ def get_faulty_nodes():
     block_heights = {}
     for pool in pool_stats:
         height = pool_stats[pool]['height']
+
+        heights[pool] = [height,pool_stats[pool]['timestamp']]
+
         if height not in block_heights:
             block_heights[height] = 1
         else:
@@ -56,6 +61,7 @@ def get_faulty_nodes():
 
     for pool in pool_stats:
         if ( correct_height - pool_stats[pool]['height'] ) > 5:
+            print(pool + " is down")
 
             id = pool+str(pool_stats[pool]['height'])
 

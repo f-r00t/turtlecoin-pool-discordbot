@@ -30,10 +30,6 @@ Remove yourself from pool.url.
 
 Returns a list of all claimed pools and their operators
 
-!heights
-
-Lists all pools and their current blockheight
-
 !help
 
 Returns a list of available commands
