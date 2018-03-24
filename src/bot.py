@@ -23,7 +23,7 @@ try:
     pickle_in = open("emails.pickle","rb")
     email_addresses = pickle.load(pickle_in)
 except:
-    print("No stored email addresses!")
+    print("No stored email addresses")
 
 try:
     pickle_in = open("claims.pickle","rb")
@@ -41,9 +41,10 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
+    if message.channel.id != allowed_channel:
+        return
+
     if message.content.startswith('!help'):
-        if message.channel.id != allowed_channel:
-            return
 
         help_msg = (
             "```Commands:\n"
@@ -70,6 +71,7 @@ async def on_message(message):
         heights = blockchecker.get_heights()
         heights_msg = (
             "```Current block heights:\n\n"
+            "Pool                          Height    Time since update\n\n"
         )
         time_now = time.time()
 
@@ -180,7 +182,7 @@ async def check_blocks():
                  if faulty_nodes[pool]['error'] == '5blocksbehind':
                      await client.send_message(client.get_channel(allowed_channel), "**"+pool+"**" + " is 5 blocks behind the network!")
 
-                     if not any(claims[pool]):
+                     if pool not in claims.keys():
                          continue
 
                      for user in claims[pool]:
@@ -194,7 +196,7 @@ async def check_blocks():
                  if faulty_nodes[pool]['error'] == 'unresponsive':
                      await client.send_message(client.get_channel(allowed_channel), "**"+pool+"**" + " is not responsive!")
 
-                     if not any(claims[pool]):
+                     if pool not in claims.keys():
                          continue
 
                      for user in claims[pool]:
