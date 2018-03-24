@@ -23,7 +23,7 @@ try:
     pickle_in = open("emails.pickle","rb")
     email_addresses = pickle.load(pickle_in)
 except:
-    print("No stored email addresses")
+    print("No stored email addresses!")
 
 try:
     pickle_in = open("claims.pickle","rb")
@@ -87,8 +87,7 @@ async def on_message(message):
         await client.send_message(message.channel, heights_msg)
 
     if message.content.startswith('!listclaims'):
-        if message.channel.id != allowed_channel:
-            return
+        
         pools = claims.keys()
         msg = ""
         for pool in pools:
@@ -104,9 +103,6 @@ async def on_message(message):
         await client.send_message(message.channel, msg)
 
     if message.content.startswith('!unclaim'):
-
-        if message.channel.id != allowed_channel:
-            return
 
         command = message.content
         args = message.content.split( )
@@ -130,14 +126,31 @@ async def on_message(message):
 
     if message.content.startswith('!claim'):
 
-
-        if message.channel.id != allowed_channel:
-            return
-
-
         command = message.content
         args = message.content.split( )
+
+        available_pools = blockchecker.get_heights().keys()
+
+        error_msg = (
+            "Usage: !claim pool.url\n\n"
+            "List of available pools:\n\n" 
+        )
+        
+        for pool in available_pools:
+            error_msg += pool + "\n"
+
+        error_msg += "```"
+
+
+        if len(args) != 2:
+            await client.send_message(message.channel, "```Missing arguments. \n\n"+error_msg)
+            return
+
         pool = args[1]
+
+        if pool not in available_pools:
+            await client.send_message(message.channel, "```Pool not in list. \n\n"+error_msg)
+            return
 
         if len(args) > 2:
             email = args[2]
