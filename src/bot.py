@@ -18,6 +18,8 @@ email_addresses = {}
 
 allowed_channel = "channelid"
 
+token = "token"
+
 
 try:
     pickle_in = open("emails.pickle","rb")
@@ -111,7 +113,22 @@ async def on_message(message):
 
         command = message.content
         args = message.content.split( )
+
+
+        error_msg = (
+            "```"
+            "Usage: !unclaim pool.url\n"
+            "```"
+        )
+
+
+        if len(args) != 2:
+            await client.send_message(message.channel, "Wrong amount of arguments. \n\n"+error_msg)
+            return
+
         pool = args[1]
+
+        
 
         if pool not in claims:
             await client.send_message(message.channel, "There is no pool with the name \"" + pool + "\" that has been claimed")
@@ -224,8 +241,10 @@ async def check_blocks():
                             print("Sending email to " + email_addresses[user])
                             print(mailer.send_email(email_addresses[user],pool + " is not responding!","Hello!" + pool + " has stopped responding."))
 
+                 
 
+                     
          await asyncio.sleep(60)
 
 client.loop.create_task(check_blocks())
-client.run('token')
+client.run(token)
