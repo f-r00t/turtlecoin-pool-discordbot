@@ -113,18 +113,26 @@ async def check_blocks():
 
                  # Id, such as z-pool.com245204 - i.e. pool name + block where the pool is stuck
                  id = pool+str(faulty_nodes[pool])
-                 print(id)
 
                  if id in alerts:
                     continue
 
                  alerts.append(id)
                  for user in claims[pool]:
-                     await client.send_message(user,pool + " is down!")
-                     if user in email_addresses:
-                         print("Sending email to " + email_addresses[user])
-                         print(mailer.send_email(email_addresses[user],pool,"") )
-
+                     
+                     if faulty_nodes[pool]['error'] == '5blocksbehind':
+                         await client.send_message(user,"**"+pool+"**" + " is 5 blocks behind the network!")
+                         print("Telling" + str(user) + " that " + pool + " is down")
+                         if user in email_addresses:
+                             print("Sending email to " + email_addresses[user])
+                             print(mailer.send_email(email_addresses[user],pool + "'s block height is below the median","Hello! \n \n " + pool + " is 5 blocks behind the network!") )
+                     if faulty_nodes[pool]['error'] == 'unresponsive':
+                         await client.send_message(user,"**"+pool+"**" + " is not responsive!")
+                         print("Telling" + str(user) + " that " + pool + " is down")
+                         if user in email_addresses:
+                             print("Sending email to " + email_addresses[user])
+                             print(mailer.send_email(email_addresses[user],pool + " is not responding!","Hello! \n \n " + pool + " has stopped responding.") 
+)
          await asyncio.sleep(60)
 
 client.loop.create_task(check_blocks())

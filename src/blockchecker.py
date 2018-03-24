@@ -14,7 +14,6 @@ def get_faulty_nodes():
 
     for pool in r.json():
         pool_name = pool
-        print(pool)
         pool_api = r.json()[pool]['url']
         api_command = pool_api + "stats"
 
@@ -24,10 +23,10 @@ def get_faulty_nodes():
 
         except:
              print("Cannot connect to " + pool)
+             faulty_nodes[pool] = {'height': 0, 'error': 'unresponsive'} 
              continue
 
     block_heights = {}
-
     for pool in pool_stats:
         height = pool_stats[pool]['height']
         if height not in block_heights:
@@ -43,6 +42,6 @@ def get_faulty_nodes():
         print(pool)
         if ( correct_height - pool_stats[pool]['height'] ) > 5:
             print(pool + " is down")
-            faulty_nodes[pool] = pool_stats[pool]['height']
+            faulty_nodes[pool] = {'height': pool_stats[pool]['height'], 'error': '5blocksbehind'}
 
     return faulty_nodes
