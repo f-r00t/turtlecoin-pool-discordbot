@@ -132,7 +132,7 @@ async def on_message(message):
         available_pools = blockchecker.get_heights().keys()
 
         error_msg = (
-            "Usage: !claim pool.url\n\n"
+            "Usage: !claim pool.url email@address.com (email is optional)\n\n"
             "List of available pools:\n\n" 
         )
         
@@ -142,7 +142,7 @@ async def on_message(message):
         error_msg += "```"
 
 
-        if len(args) != 2:
+        if len(args) != 2 or len(args) != 3:
             await client.send_message(message.channel, "```Missing arguments. \n\n"+error_msg)
             return
 
